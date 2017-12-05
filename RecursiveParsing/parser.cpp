@@ -120,6 +120,7 @@ std::shared_ptr<GrammarNode> parser::T(std::shared_ptr<lexicalAnalyzer> a) {
             a.get()->nextToken();
             answer.get()->children.push_back(Ex1(a));
             assert(a.get()->currToken()==RPAREN);
+            answer.get()->children.push_back(std::make_shared<GrammarNode>(GrammarNode(GrammarNode::TERM,")")));
             a.get()->nextToken();
             break;
         case BOOL:
