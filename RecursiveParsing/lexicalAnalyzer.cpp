@@ -27,7 +27,9 @@ bool lexicalAnalyzer::eat(std::string str) {
 bool lexicalAnalyzer::eatVal() {
     char c;
     bool flag = false;
+    currBool="";//
     while (dataSize > pointer && ((c = data[pointer]) >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z')) {
+        currBool+=data[pointer];//
         pointer++;
         flag = true;
     }
@@ -83,4 +85,8 @@ void lexicalAnalyzer::nextToken() {
 
 token lexicalAnalyzer::currToken() {
     return currentToken;
+}
+
+std::string lexicalAnalyzer::getCurrBool() {
+    return currBool;
 }

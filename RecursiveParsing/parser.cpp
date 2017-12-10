@@ -7,7 +7,7 @@ std::shared_ptr<GrammarNode> parser::parse(std::string str) {
 }
 
 std::shared_ptr<GrammarNode> parser::Ex1(std::shared_ptr<lexicalAnalyzer> a) {
-    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Ex1,"Ex"));
+    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Ex1,"expXOR"));
     switch (a.get()->currToken()){
         case NOT:
         case LPAREN:
@@ -21,7 +21,7 @@ std::shared_ptr<GrammarNode> parser::Ex1(std::shared_ptr<lexicalAnalyzer> a) {
     return answer;
 }
 std::shared_ptr<GrammarNode> parser::Ex2(std::shared_ptr<lexicalAnalyzer> a) {
-    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Ex2,"Ex\'"));
+    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Ex2,"expXOR\'"));
     switch (a.get()->currToken()){
         case XOR:
             answer.get()->children.push_back(std::make_shared<GrammarNode>(GrammarNode(GrammarNode::TERM,"xor")));
@@ -39,7 +39,7 @@ std::shared_ptr<GrammarNode> parser::Ex2(std::shared_ptr<lexicalAnalyzer> a) {
 }
 
 std::shared_ptr<GrammarNode> parser::Eo1(std::shared_ptr<lexicalAnalyzer> a) {
-    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Eo1,"Eo"));
+    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Eo1,"expOR"));
     switch (a.get()->currToken()){
         case NOT:
         case LPAREN:
@@ -54,7 +54,7 @@ std::shared_ptr<GrammarNode> parser::Eo1(std::shared_ptr<lexicalAnalyzer> a) {
 }
 
 std::shared_ptr<GrammarNode> parser::Eo2(std::shared_ptr<lexicalAnalyzer> a) {
-    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Eo2,"Eo\'"));
+    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Eo2,"expOR\'"));
     switch (a.get()->currToken()){
         case OR:
             answer.get()->children.push_back(std::make_shared<GrammarNode>(GrammarNode(GrammarNode::TERM,"or")));
@@ -73,7 +73,7 @@ std::shared_ptr<GrammarNode> parser::Eo2(std::shared_ptr<lexicalAnalyzer> a) {
 }
 
 std::shared_ptr<GrammarNode> parser::Ea1(std::shared_ptr<lexicalAnalyzer> a) {
-    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Ea1,"Ea"));
+    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Ea1,"expAND"));
     switch (a.get()->currToken()){
         case NOT:
         case LPAREN:
@@ -88,7 +88,7 @@ std::shared_ptr<GrammarNode> parser::Ea1(std::shared_ptr<lexicalAnalyzer> a) {
 }
 
 std::shared_ptr<GrammarNode> parser::Ea2(std::shared_ptr<lexicalAnalyzer> a) {
-    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Ea2,"Ea\'"));
+    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::Ea2,"expAND\'"));
     switch (a.get()->currToken()){
         case AND:
             answer.get()->children.push_back(std::make_shared<GrammarNode>(GrammarNode(GrammarNode::TERM,"and")));
@@ -108,7 +108,7 @@ std::shared_ptr<GrammarNode> parser::Ea2(std::shared_ptr<lexicalAnalyzer> a) {
 }
 
 std::shared_ptr<GrammarNode> parser::T(std::shared_ptr<lexicalAnalyzer> a) {
-    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::T,"T"));
+    auto answer = std::make_shared<GrammarNode>(GrammarNode(GrammarNode::T,"TERM"));
     switch (a.get()->currToken()){
         case NOT:
             answer.get()->children.push_back(std::make_shared<GrammarNode>(GrammarNode(GrammarNode::TERM,"not")));
@@ -124,7 +124,7 @@ std::shared_ptr<GrammarNode> parser::T(std::shared_ptr<lexicalAnalyzer> a) {
             a.get()->nextToken();
             break;
         case BOOL:
-            answer.get()->children.push_back(std::make_shared<GrammarNode>(GrammarNode(GrammarNode::TERM,"bool")));
+            answer.get()->children.push_back(std::make_shared<GrammarNode>(GrammarNode(GrammarNode::TERM,"bool("+a.get()->getCurrBool() + ")")));
             a.get()->nextToken();
             break;
         default:

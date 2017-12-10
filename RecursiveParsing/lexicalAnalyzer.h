@@ -12,8 +12,11 @@ struct lexicalAnalyzer {
     void nextToken();
     token currToken();
 
+    std::string getCurrBool();//
+
 private:
     std::string data;
+    std::string currBool;//
     int pointer;
     unsigned long dataSize;
     token currentToken = END;
