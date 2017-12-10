@@ -28,7 +28,38 @@ private:
     std::shared_ptr<GrammarNode> T(std::shared_ptr<lexicalAnalyzer>);
 };
 
+static std::string tokenToStr(token t){
+    switch (t){
+        case NOT:
+            return "NOT";
+        case AND:
+            return "AND";
+        case OR:
+            return "OR";
+        case XOR:
+            return "XOR";
+        case LPAREN:
+            return "LPAREN";
+        case RPAREN:
+            return "RPAREN";
+        case END:
+            return "END";
+        case BOOL:
+            return "BOOL";
+        default:
+            return "unknown";
+    }
+}
+
 struct parsing_exception : std::exception{
+    const std::string message;
+
+    const char* what() const throw() override {
+        return message.c_str();
+    }
+
+    explicit parsing_exception(std::string str, token t) noexcept :
+            message("Can't parse expression: stuck in " + str + " with token - " + tokenToStr(t)){}
 };
 
 #endif //INC_2LAB_PARSER_H

@@ -16,7 +16,7 @@ std::shared_ptr<GrammarNode> parser::Ex1(std::shared_ptr<lexicalAnalyzer> a) {
             answer.get()->children.push_back(Ex2(a));
             break;
         default:
-            throw parsing_exception();
+            throw parsing_exception("Ex",a.get()->currToken());
     }
     return answer;
 }
@@ -33,7 +33,7 @@ std::shared_ptr<GrammarNode> parser::Ex2(std::shared_ptr<lexicalAnalyzer> a) {
         case RPAREN:
             break;
         default:
-            throw parsing_exception();
+            throw parsing_exception("Ex\'",a.get()->currToken());
     }
     return answer;
 }
@@ -48,7 +48,7 @@ std::shared_ptr<GrammarNode> parser::Eo1(std::shared_ptr<lexicalAnalyzer> a) {
             answer.get()->children.push_back(Eo2(a));
             break;
         default:
-            throw parsing_exception();
+            throw parsing_exception("Eo",a.get()->currToken());
     }
     return answer;
 }
@@ -67,7 +67,7 @@ std::shared_ptr<GrammarNode> parser::Eo2(std::shared_ptr<lexicalAnalyzer> a) {
         case XOR:
             break;
         default:
-            throw parsing_exception();
+            throw parsing_exception("Eo\'",a.get()->currToken());
     }
     return answer;
 }
@@ -82,7 +82,7 @@ std::shared_ptr<GrammarNode> parser::Ea1(std::shared_ptr<lexicalAnalyzer> a) {
             answer.get()->children.push_back(Ea2(a));
             break;
         default:
-            throw parsing_exception();
+            throw parsing_exception("Ea",a.get()->currToken());
     }
     return answer;
 }
@@ -102,7 +102,7 @@ std::shared_ptr<GrammarNode> parser::Ea2(std::shared_ptr<lexicalAnalyzer> a) {
         case OR:
             break;
         default:
-            throw parsing_exception();
+            throw parsing_exception("Ea\'",a.get()->currToken());
     }
     return answer;
 }
@@ -128,7 +128,7 @@ std::shared_ptr<GrammarNode> parser::T(std::shared_ptr<lexicalAnalyzer> a) {
             a.get()->nextToken();
             break;
         default:
-            throw parsing_exception();
+            throw parsing_exception("T",a.get()->currToken());
     }
     return answer;
 }
