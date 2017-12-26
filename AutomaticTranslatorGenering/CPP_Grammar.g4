@@ -87,7 +87,7 @@ grammar CPP_Grammar;
 
 }
 
-stat returns [String str]	: pc=pure_code {System.out.println($pc.str);};
+stat returns [String str]	: pc=pure_code {$str = $pc.str;};
 
 pure_code returns [String str] 	: frst_i = include_part{$str = $frst_i.str;} (scnd =pure_code{$str += $scnd.str;})?
 								| frst_f = function_part{$str = $frst_f.str;} (scnd = pure_code{$str +=$scnd.str;})? 
@@ -99,7 +99,7 @@ include_part returns [String str]	: i=INCLUDE  s=STRING
 									;
 
 function_part returns [String str, String argsStr] @init{$argsStr = "";}	:  typeName=STABLENAME funName=STABLENAME LPAREN (type=STABLENAME var=unstable_name{$argsStr+=$type.text + " " + $var.str;} (c=COMMA{$argsStr+=$c.text;})?)* RPAREN  LFPAREN fb=function_body RFPAREN 
-																{$str = $typeName.text + " " + $funName.text + "("+$argsStr+")" + "{"+$fb.str+"}";}
+																{$str = $typeName.text + " " + $funName.text + "("+$argsStr+")" + "{\n"+$fb.str+"}\n";}
 															;
 
 function_body returns [String str] @init{$str="";}	: (op = operation{$str += (get_random_str()) + $op.str + '\n';})*
@@ -117,7 +117,13 @@ operation returns [String str]	: vd=var_declaraion SEMICOLON
 									{$str = $fs.str;}
 								| ws=while_statement
 									{$str = $ws.str;}
+								| io=io_statement SEMICOLON
+									{$str = $io.str + ";";}
 								;
+
+io_statement returns [String str]	: CIN RTPAREN varName=unstable_name {$str=("cin >> " + $varName.str);} (RTPAREN varName1=unstable_name {$str+=" >> " + $varName1.str;})*
+									| COUT LTPAREN dc=data_container {$str= ("cout << " + $dc.str);} (LTPAREN dc1=data_container {$str+=" << " + $dc1.str;})*
+									;
 
 var_declaraion returns [String str, String argsStr] @init{$argsStr = "";}	: typeName=STABLENAME (varName=unstable_name {$argsStr+=$varName.str;} | varAssig=var_assignment {$argsStr+=$varAssig.str;}) 
 															(COMMA varName=unstable_name {$argsStr+=(" ," + $varName.str);} | varAssig=var_assignment {$argsStr+=(" ,"+$varAssig.str);})*
@@ -132,6 +138,8 @@ data_container returns [String str]	: varName=unstable_name
 										{$str=$varName.str;}
 									| val=VALUE
 										{$str=$val.text;}
+									| st=STRING
+										{$str=$st.text;}
 									;
 
 function_invoking returns [String str, String argsStr] @init{$argsStr = "";}	: funName=STABLENAME LPAREN (dc=data_container {$argsStr+=$dc.str;} /*varName=unstable_name c=(COMMA)?{$argsStr+=$varName.str+ " "+c.text;}|val=value c=(COMMA)?{$argsStr+=$val.str+ " "+c.text;}*/)* RPAREN
@@ -140,15 +148,15 @@ function_invoking returns [String str, String argsStr] @init{$argsStr = "";}	: f
 																					{$str=$dc1.str + $as.text + $dc2.str;}
 																				;
 
-if_statement returns [String str]	: (IF LPAREN c=condition RPAREN LFPAREN fb=function_body RFPAREN) {$str="if (" + $c.str + "){" + $fb.str + "}";} (ELSE LFPAREN fb1=function_body RFPAREN {$str+="else {"+$fb1.str+"}";})?
+if_statement returns [String str]	: (IF LPAREN c=condition RPAREN LFPAREN fb=function_body RFPAREN) {$str="if (" + $c.str + "){\n" + $fb.str + "}";} (ELSE LFPAREN fb1=function_body RFPAREN {$str+="else {"+$fb1.str+"}";})?
 									;
 
 for_statement returns [String str, String argsStr] @init{$argsStr="";}	: FOR LPAREN (vd=var_declaraion{$argsStr+=$vd.str;}|vs=var_assignment{$argsStr+=$vs.str;}) SEMICOLON con=condition SEMICOLON vs1=var_assignment RPAREN LFPAREN fb=function_body RFPAREN
-															{$str = "for (" + $argsStr + "; " + $con.str + "; " + $vs1.str + "){" + $fb.str+ "}";}
+															{$str = "for (" + $argsStr + "; " + $con.str + "; " + $vs1.str + "){\n" + $fb.str+ "}";}
 														;
 
 while_statement returns [String str]	: WHILE LPAREN con=condition RPAREN LFPAREN fb=function_body RFPAREN 
-											{$str= "while (" + $con.str + "){" + $fb.str + "}";}
+											{$str= "while (" + $con.str + "){\n" + $fb.str + "}";}
 										;
 
 
@@ -170,7 +178,7 @@ unstable_name returns [String str] 	: name = STABLENAME
 
 WS  :   [ \t\n]+ -> skip ; // toss out whitespace
 
-STRING : '"'.*?'"'
+STRING 	: ('"'.*?'"')
 		;
 
 
@@ -187,9 +195,7 @@ ARITH_SIGN	: '+'|'-'|'*'|'/'|'%'
 COND_SIGN	: '&&'|'||'
 			;
 
-VALUE 	: STRING
-		| '\'' .? '\''
-		| [0-9]+
+VALUE 	: [0-9]+
 		;
 
 BOOL 	: 'true'
@@ -206,6 +212,18 @@ WHILE 	: 'while'
 		;
 
 ELSE 	: 'else'
+		;
+
+CIN 	: 'cin'
+		;
+
+COUT 	: 'cout'
+		;
+
+LTPAREN	: '<<'
+		;
+
+RTPAREN	: '>>'
 		;
 
 STABLENAME	: [a-zA-Z][a-zA-Z0-9]*
