@@ -9,7 +9,7 @@ grammar CPP_Grammar;
 	/*var obfuscation mechanisms*/
 	Map<String, String> var_obf = new HashMap<String,String>();
 
-	int new_name_symbols_count = 2;
+	int new_name_symbols_count = 10;
 	Set<String> useless_names_set = new TreeSet<String>();
 	
 	Set<String> all_names_set = new HashSet<String>(/*Collections.singleton(IO)*/);
@@ -125,9 +125,9 @@ io_statement returns [String str]	: CIN RTPAREN varName=unstable_name {$str=("ci
 									| COUT LTPAREN dc=data_container {$str= ("cout << " + $dc.str);} (LTPAREN dc1=data_container {$str+=" << " + $dc1.str;})*
 									;
 
-var_declaraion returns [String str, String argsStr] @init{$argsStr = "";}	: typeName=STABLENAME (varName=unstable_name {$argsStr+=$varName.str;} | varAssig=var_assignment {$argsStr+=$varAssig.str;}) 
+var_declaraion returns [String str, String argsStr] @init{$argsStr = ""; $str="";}	: (CONST{$str="const ";})? typeName=STABLENAME (varName=unstable_name {$argsStr+=$varName.str;} | varAssig=var_assignment {$argsStr+=$varAssig.str;}) 
 															(COMMA varName=unstable_name {$argsStr+=(" ," + $varName.str);} | varAssig=var_assignment {$argsStr+=(" ,"+$varAssig.str);})*
-																{$str = $typeName.text + " " + $argsStr;}
+																{$str += $typeName.text + " " + $argsStr;}
 															;
 
 var_assignment returns [String str]	: varName=unstable_name ASSIGMENT dc=data_container {$str = $varName.str + " = " + $dc.str;}
@@ -183,6 +183,9 @@ STRING 	: ('"'.*?'"')
 
 
 INCLUDE : '#include'
+		;
+
+CONST 	: 'const'
 		;
 
 

@@ -9,6 +9,7 @@ int main() {
 #include "iostream"
 
 void f(int x){
+	const int v=0;
 	x=x;
 	cout<<x;
 	cin>>x>>y;
